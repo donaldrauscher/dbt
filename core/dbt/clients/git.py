@@ -69,8 +69,8 @@ def clone_and_checkout(repo, cwd, dirname=None, remove_git_dir=False,
                        branch=None):
     exists = None
     try:
-        _, err = clone(repo, cwd, dirname=dirname,
-                       remove_git_dir=remove_git_dir)
+        out, err = clone(repo, cwd, dirname=dirname,
+                         remove_git_dir=remove_git_dir)
     except dbt.exceptions.CommandResultError as exc:
         err = exc.stderr.decode('utf-8')
         exists = re.match("fatal: destination path '(.+)' already exists", err)
@@ -83,7 +83,7 @@ def clone_and_checkout(repo, cwd, dirname=None, remove_git_dir=False,
         directory = exists.group(1)
         logger.debug('Updating existing dependency %s.', directory)
     else:
-        matches = re.match("Cloning into '(.+)'", err.decode('utf-8'))
+        matches = re.match("Cloning into '(.+)'", out.decode('utf-8'))
         directory = matches.group(1)
         logger.debug('Pulling new dependency %s.', directory)
     full_path = os.path.join(cwd, directory)
